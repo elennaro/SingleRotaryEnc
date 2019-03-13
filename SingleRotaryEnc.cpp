@@ -1,6 +1,7 @@
 #include "SingleRotaryEnc.h"
 
 #define POLLING_TIMEOUT 25
+#define LONG_PRESS_TIME 500
 
 SingleRotaryEnc::SingleRotaryEnc(
 				uint8_t clockPin,
@@ -8,7 +9,8 @@ SingleRotaryEnc::SingleRotaryEnc(
 				uint8_t buttonPin,
 				void (*up)(void),
 				void (*down)(void),
-				void (*click)(void)
+				void (*click)(void),
+				void (*longPress)(void)
 ) {
 		this->clockPin = clockPin;
 		this->dataPin = dataPin;
@@ -16,6 +18,7 @@ SingleRotaryEnc::SingleRotaryEnc(
 		this->up = up;
 		this->down = down;
 		this->click = click;
+		this->longPress = longPress;
 
 		pinMode(clockPin, INPUT);
 		pinMode(dataPin, INPUT);
@@ -48,11 +51,19 @@ void SingleRotaryEnc::loop() {
 
 		buttonDebounce = buttonDebounce * 2 | digitalRead(buttonPin);
 
-		if ((buttonDebounce | 0b1000000000000000) == 0b1100000000000000) {
+		if ((buttonDebounce | 0x8000) == 0xC000) {
+				buttonPressed = 1;
 				buttonDebounce = 0;
-				directionBuffer = directionBuffer * 4;
-				click();
-		} else if (millis() - previousTime >= POLLING_TIMEOUT && (directionBuffer & 0b00000011) != 0) {
+				clickTime = millis();
+		} else if (buttonPressed && buttonDebounce == 0x7fff) {
+				if (longPress != nullptr && millis() - clickTime >= LONG_PRESS_TIME) {
+						longPress();
+				} else {
+						click();
+				}
+				buttonPressed = 0;
+				clickTime = millis();
+		} else if (!buttonPressed && millis() - previousTime >= POLLING_TIMEOUT && (directionBuffer & 0b00000011) != 0) {
 				if ((directionBuffer & 0b00001111) == 0b00000001 || (directionBuffer & 0b00001111) == 0b00000101) {
 						up();
 						position++;

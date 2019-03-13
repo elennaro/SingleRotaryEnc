@@ -24,7 +24,12 @@ private:
 
 		void (*click)(void);
 
-		uint16_t buttonDebounce = 0;
+		void (*longPress)(void);
+
+
+		boolean buttonPressed = 0;
+		uint16_t buttonDebounce = 0xFFFF;
+		uint32_t clickTime = 0;
 		volatile uint8_t directionBuffer;
 		volatile int32_t position = 0;
 		volatile int32_t previousTime = 0;
@@ -36,7 +41,15 @@ private:
 		void dataRise();
 
 public:
-		SingleRotaryEnc(uint8_t clockPin, uint8_t dataPin, uint8_t buttonPin, void (*up)(void), void (*down)(void), void (*click)(void));
+		SingleRotaryEnc(
+						uint8_t clockPin,
+						uint8_t dataPin,
+						uint8_t buttonPin,
+						void (*up)(void),
+						void (*down)(void),
+						void (*click)(void),
+						void (*longPress)(void) = nullptr
+		);
 
 		void loop();
 

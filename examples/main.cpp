@@ -21,13 +21,17 @@ void click() {
 		Serial.println(F("CLICK: "));
 }
 
+void longPress() {
+		Serial.println(F("LONG PRESS: "));
+}
+
 ////////////////////////////////////////////////////
 void setup() {
 		pinMode(CLK_PIN, INPUT);
 		pinMode(DATA_PIN, INPUT);
 
 		Serial.begin(115200);
-		rotaryEnc = new SingleRotaryEnc(CLK_PIN, DATA_PIN, BUTTON_PIN, up, down, click);
+		rotaryEnc = new SingleRotaryEnc(CLK_PIN, DATA_PIN, BUTTON_PIN, up, down, click, longPress);
 }
 
 ////////////////////////////////////////////////////
