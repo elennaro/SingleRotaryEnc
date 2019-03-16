@@ -51,11 +51,11 @@ void SingleRotaryEnc::loop() {
 
 		buttonDebounce = buttonDebounce * 2 | digitalRead(buttonPin);
 
-		if ((buttonDebounce | 0x8000) == 0xC000) {
+		if ((buttonDebounce | 0xf0) == 0xf8) {
 				buttonPressed = 1;
 				buttonDebounce = 0;
 				clickTime = millis();
-		} else if (buttonPressed && buttonDebounce == 0x7fff) {
+		} else if (buttonPressed && buttonDebounce == 0x1f) {
 				if (longPress != nullptr && millis() - clickTime >= LONG_PRESS_TIME) {
 						longPress();
 				} else {

@@ -28,7 +28,7 @@ private:
 
 
 		boolean buttonPressed = 0;
-		uint16_t buttonDebounce = 0xFFFF;
+		uint8_t buttonDebounce = 0xFF;
 		uint32_t clickTime = 0;
 		volatile uint8_t directionBuffer;
 		volatile int32_t position = 0;
